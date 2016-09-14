@@ -28,9 +28,9 @@ print_string:
 
 print_char:
     xor rax, rax
-    push dl
+    push di
     mov rdx, 1 ; количество байт, которое нужно записать
-    lea rsi, rsp ; адрес строки
+    mov rsi, rsp ; адрес строки
     mov rdi, 1 ; пишем в stdout
     mov rax, 1 ; номер системного вызова write
     
