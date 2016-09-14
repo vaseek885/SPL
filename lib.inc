@@ -150,22 +150,24 @@ read_word:
 
 ; rdi points to a string
 ; returns rax: number, rdx : length
+
 parse_uint:
     mov r10, 10 ; основанеие СС
-    xor r9, r9 ; длина числа
-    xor rax, rax ; число
-    ;r8b содержит следующий символ
-    
+    xor rax, rax ; прочитанное число
+    xor r9, r9 ; длина прочитаного числа
+    ; r8b - очередная цифра
+
     .iterate:
         mov r8b, [rdi + r9]
+
         cmp r8b, '0'
         jl .exit
-        cmp r8b, '9' 
-        jg .exit 
+        cmp r8b, '9'
+        jg .exit
 
         sub r8b, '0'
-        mul r10
-        add rax, r8; добавляем цифру к ответу
+        mul r10     ; здесь мы портим rdx
+        add rax, r8
 
         inc r9
         jmp .iterate
