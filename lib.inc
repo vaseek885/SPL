@@ -151,7 +151,6 @@ read_word:
 ; rdi points to a string
 ; returns rax: number, rdx : length
 parse_uint:
-    xor r10,r10
     mov r10, 10 ; основанеие СС
     xor r9, r9 ; длина числа
     xor rax, rax ; число
@@ -159,11 +158,10 @@ parse_uint:
     
     .iterate:
         mov r8b, [rdi + r9]
-
         cmp r8b, '0'
         jl .exit
         cmp r8b, '9' 
-        jg .exit ;Если не в пределах от 0 до 9, то заканчиваем выполнение
+        jg .exit 
 
         sub r8b, '0'
         mul r10
