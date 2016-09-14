@@ -30,7 +30,7 @@ print_char:
     xor rax, rax
     push di
     mov rdx, 1 ; количество байт, которое нужно записать
-    mov rsi, rsp ; адрес строки
+    mov rsi, rsp ; адрес символа
     mov rdi, 1 ; пишем в stdout
     mov rax, 1 ; номер системного вызова write
     
@@ -39,7 +39,8 @@ print_char:
     ret
 
 print_newline:
-    xor rax, rax
+    mov rdi, 10
+    call print_char
     ret
 
 
