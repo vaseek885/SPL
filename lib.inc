@@ -88,11 +88,11 @@ string_copy:
 
     test al,al
     jz .exit
-    
+
     inc rdi
     inc rsi
     jmp .iterate
 
-    .exit
+    .exit:
     ret
 
