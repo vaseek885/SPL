@@ -64,17 +64,14 @@ print_uint:
 
 print_int:
     test rdi, rdi
-    js .minus ; отрицательное число
+    js .negative ; отрицательное число
 
-    .plus:
-        call print_uint
+    call print_uint
     ret
-    .minus:
+    .negative:
         push rdi
-
         mov rdi, '-'
         call print_char
-
         pop rdi
 
         not rdi
@@ -84,47 +81,41 @@ print_int:
     ret
 
 string_equals:
-    ; rdi - указатель 1
-    ; rsi - указатель 2
     xor rax, rax
-
-    .iterate:
+    .cycle:
         mov r8b, [rdi]
         mov r9b, [rsi]
-
         inc rdi
         inc rsi
 
         cmp r8b, r9b
-        je .equals
+        je .eq
+        mov rax, 0
+        ret
 
-        .not_equals:
-            mov rax, 0
-            ret
-
-        .equals:
+        .eq:
             test r8b, r9b
             jz .exit
 
-        jmp .iterate
+        jmp .cycle
     .exit:
         mov rax, 1
     ret
 
 read_char:
-    xor ax, ax ; ВОЛШЕБНАЯ СТРОЧКА
-    push ax ; выделяю буф. размером 2 Byte
+    xor ax, ax ; 
+    push ax ; буфер 2 байта
     
-    mov rax, 0 ; номер системного вызова read
-    mov rdi, 0 ; дескриптор stdin
+    mov rax, 0 ; read
+    mov rdi, 0 ;  stdin
     mov rsi, rsp ; буфер
-    mov rdx, 1 ; количество байт для чтения
+    mov rdx, 1 ; количество байт 
     syscall
 
     pop ax
     ret
 
-section .data ; по какой-то неводомой причине здесь можно писать .data :D
+section .data ; 
 word_buffer times 256 db 0
 
 section .text
@@ -132,31 +123,31 @@ section .text
 read_word:
     xor rdx, rdx ; длина строки
 
-    .read_next:
+    .next:
         push rdx
         call read_char
         pop rdx
 
         cmp al, 0x20
-        jz .check
+        jz .skip
         cmp al, 0x09
-        jz .check
+        jz .skip
         cmp al, 0x0A
-        jz .check
+        jz .skip
 
         test al, al
-        jz .finish
+        jz .exit
 
         mov byte[word_buffer + rdx], al
         inc rdx
 
-        jmp .read_next
+        jmp .next
 
-    .check:
+    .skip:
         test rdx, rdx
-        jz .read_next
+        jz .next
 
-    .finish:
+    .exit:
         mov byte[word_buffer + rdx], 0x00
         mov rax, word_buffer
     ret
@@ -164,25 +155,21 @@ read_word:
 ; rdi points to a string
 ; returns rax: number, rdx : length
 parse_uint:
-    mov r10, 10 ; основанеие СС
-    xor rax, rax ; прочитанное число
-    xor r9, r9 ; длина прочитаного числа
-    ; r8b - очередная цифра
-
-    .iterate:
+    mov r10, 10 ; основа десятичной системы счисления
+    xor rax, rax ;  число
+    xor r9, r9 ; длина числа
+    .cycle:
         mov r8b, [rdi + r9]
 
         cmp r8b, '0'
         jl .exit
         cmp r8b, '9'
         jg .exit
-
+        mul r10   
         sub r8b, '0'
-        mul r10     ; здесь мы портим rdx
         add rax, r8
-
         inc r9
-        jmp .iterate
+        jmp .cycle
 
     .exit:
         mov rdx, r9
@@ -194,28 +181,21 @@ parse_int:
     mov r8b, [rdi]
     cmp r8b, '-'
     jnz .plus
-
-    .minus:
-        inc rdi
-        call parse_uint
-
-        not rax
-        inc rax
-
-        inc rdx
+    inc rdi
+    call parse_uint
+    not rax
+    inc rax
+    inc rdx
     ret
     .plus:
         call parse_uint
     ret
 
 string_copy:
-    ; rdi - адрес первого символа строки (далее - очередного символа)
-    ; rsi - адрсе места вставки
     xor rax, rax
 
-    .iterate:
+    .cycle:
         mov al, [rdi]
-
         ; check
         test al, al
         jz .exit
@@ -225,7 +205,7 @@ string_copy:
         inc rdi
         inc rsi
 
-        jmp .iterate
+        jmp .cycle
 
     .exit:
         mov byte[rsi], 0
