@@ -57,10 +57,8 @@ print_uint:
     sub rsp, 22
     mov rax, rdi
     test rax, rax 
-    jz .exit
     dec r9 
     mov qword[r9], 0
-    ;mov byte[r9], 0x00
 
     .iterate:
         xor rdx, rdx
@@ -75,7 +73,6 @@ print_uint:
     mov rdi, r9
     call print_string
     add rsp, 22
-    .exit:
     ret
 
 
