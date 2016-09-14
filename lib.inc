@@ -15,8 +15,9 @@ string_length:
     .exit:
     ret
 print_string:
-    
+    push rdi
     call string_length
+    pop  rdi
 
     mov rdx, rax ; количество байт, которое нужно записать 
     mov rsi, rdi ; адрес строки
@@ -27,6 +28,12 @@ print_string:
 
 print_char:
     xor rax, rax
+    mov rdx, 1 ; количество байт для записи
+    mov rdi, 1 ; дескриптор stdout
+    mov rax, 1 ; номер системного вызова write
+    mov rsi, rdi ; адрес строки
+    syscall
+
     ret
 
 print_newline:
