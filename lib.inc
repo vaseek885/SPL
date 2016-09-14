@@ -99,7 +99,16 @@ string_equals:
 
 
 read_char:
+    sub rsp, 2
     xor rax, rax
+    mov rax, 0
+    mov rdi, 0
+    mov rsi, rsp
+    mov rdx, 1
+
+    syscall
+    add rsp, 2
+
     ret 
 
 section .data
