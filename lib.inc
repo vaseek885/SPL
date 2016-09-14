@@ -78,6 +78,20 @@ print_uint:
 
 print_int:
     xor rax, rax
+    test rdi, rdi
+    js .negative
+
+    call print_uint
+    ret
+
+    .negative:
+    push rdi
+    mov rdi, '-'
+    call print_char
+    pop rdi
+    not rdi
+    inc rdi
+    call print_uint
     ret
 
 string_equals:
