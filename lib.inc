@@ -118,7 +118,7 @@ word_buffer times 256 db 0
 section .text
 
 read_word:
-xor rdx, rdx ; длина строки
+    xor rdx, rdx ; длина строки
 .next:
     push rdx
     call read_char
@@ -151,7 +151,28 @@ xor rdx, rdx ; длина строки
 ; rdi points to a string
 ; returns rax: number, rdx : length
 parse_uint:
-    xor rax, rax
+    mov r10, 10 ; основанеие СС
+    xor r9, r9 ; длина числа
+    xor rax, rax ; число
+    ;r8b содержит следующий символ
+    
+    .iterate:
+        mov r8b, [rdi + r9]
+
+        cmp r8b, '0'
+        jl .exit
+        cmp r8b, '9' 
+        jg .exit ;Если не в пределах от 0 до 9, то заканчиваем выполнение
+
+        sub r8b, '0'
+        mul r10
+        add rax, r8; добавляем цифру к ответу
+
+        inc r9
+        jmp .iterate
+
+    .exit:
+        mov rdx, r9
     ret
 
 ; rdi points to a string
