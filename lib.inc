@@ -99,7 +99,7 @@ string_equals:
 
 
 read_char:
- xor ax, ax ; 
+ ;xor ax, ax ; 
     push ax ; 
     
     mov rax, 0 ; 
