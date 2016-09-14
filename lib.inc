@@ -120,7 +120,9 @@ section .text
 read_word:
 xor rdx, rdx ; длина строки
 .next:
+    push rdx
     call read_char
+    pop rdx
     cmp al, 0x09
     jz .done
     cmp al, 0x20
