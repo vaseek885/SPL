@@ -81,5 +81,18 @@ parse_int:
 
 
 string_copy:
+    xor rax, rax
+    .iterate:
+    mov al, [rdi]
+    mov byte[rsi], al
+
+    test al,al
+    jz .exit
+    
+    inc rdi
+    inc rsi
+    jmp .iterate
+
+    .exit
     ret
 
