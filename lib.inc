@@ -33,9 +33,8 @@ print_char:
     mov rsi, rsp ; адрес символа
     mov rdi, 1 ; пишем в stdout
     mov rax, 1 ; номер системного вызова write
-    pop di
     syscall
-
+    pop di
     ret
 
 print_newline:
