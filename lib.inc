@@ -57,7 +57,7 @@ print_uint:
     mov rax, rdi
     test rax, rax 
     jz .exit
-    ;inc r9 
+    dec r9 
     mov byte[r9], 0x00
 
     .iterate:
