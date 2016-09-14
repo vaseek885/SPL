@@ -31,7 +31,7 @@ print_char:
     mov rdx, 1 ; количество байт для записи
     mov rdi, 1 ; дескриптор stdout
     mov rax, 1 ; номер системного вызова write
-    mov rsi, rdi ; адрес строки
+    mov byte rsi, [rdi] ; адрес строки
     syscall
 
     ret
