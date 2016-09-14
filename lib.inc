@@ -56,7 +56,7 @@ print_uint:
     test rax, rax 
     jz .exit
     inc r9 
-    mov r9, 0
+    mov r9, 0x00
 
     .iterate:
         xor rdx, rdx
