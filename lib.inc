@@ -46,6 +46,30 @@ print_newline:
 
 print_uint:
     xor rax, rax
+    xor r8, r8
+    ;Для нашей строки понадобится 21 байт места максимум
+        
+    mov rax, rdi
+    test rax,rax 
+    jz .exit
+    inc rsp 
+    mov [rsp], 0x00
+
+    .iterate:
+        xor rdx, rdx
+        inc rsp
+        inc r8
+        div 10
+        add rdx, '0'
+        mov byte[rsp], dl
+        test rax, rax
+        jz .next
+        jmp .iterate
+    .next:
+    mov rdi, rsp
+    call print_string
+    sub rsp, r8
+    .exit:
     ret
 
 
