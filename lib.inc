@@ -6,7 +6,7 @@ string_length:
     
     .iterate:
         mov rdx, [rdi + rax]
-        test rdx, rdx ; Если строка закончилась, то выходим.
+        test dl, dl ; Если строка закончилась, то выходим.
         jz .exit
 
         inc rax
@@ -99,18 +99,18 @@ string_equals:
 
 
 read_char:
-    xor ax, ax ; 
-    sub rsp, 2
-    xor rax, rax
-    mov rax, 0
-    mov rdi, 0
-    mov rsi, rsp
-    mov rdx, 1
-
+ xor ax, ax ; 
+    push ax ; 
+    
+    mov rax, 0 ; 
+    mov rdi, 0 ; 
+    mov rsi, rsp ; 
+    mov rdx, 1 ; 
     syscall
-    add rsp, 2
 
-    ret 
+    pop ax
+    ret
+
 
 section .data
 word_buffer times 256 db 0
