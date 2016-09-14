@@ -44,34 +44,38 @@ print_newline:
 
 
 print_uint:
-    xor rax, rax
-    xor r8, r8
-    xor r9, r9
-
-    
-    ;Для нашей строки понадобится 21 байт места максимум
-
-    mov r8, 10 ; делим на 10
-    mov r9, rsp
-    sub rsp, 22
+    ; rdi - 8-ми байтное беззнаковое число
     mov rax, rdi
-    test rax, rax 
-    dec r9 
-    mov qword[r9], 0
 
-    .iterate:
+    mov r10, 10 ; основание СС
+
+    mov r9, rsp
+    sub rsp, 21 ; выделяем буфер
+
+    ; записываем признак конца строки
+    dec r9
+    mov byte[r9], 0x00
+    
+    .iteratey: ; цикл с пост-условием
         xor rdx, rdx
-        dec r9
-        div r8
+
+        div r10 ; rax - делимое
+
+        ; число -> символ ASCII
         add rdx, '0'
+
+        ; кладем очередную цифру в стек
+        dec r9
         mov byte[r9], dl
+        
+        ; ценая часть = 0 ?
         test rax, rax
-        jz .next
-        jmp .iterate
-    .next:
+        jnz .iteratey
+
     mov rdi, r9
     call print_string
-    add rsp, 22
+    
+    add rsp, 21 ; восстанавливаем stack
     ret
 
 
