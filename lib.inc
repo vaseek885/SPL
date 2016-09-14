@@ -47,13 +47,14 @@ print_newline:
 print_uint:
     xor rax, rax
     xor r8, r8
-    mov r8, 10
     xor r9, r9
+
+    
     ;Для нашей строки понадобится 21 байт места максимум
+
+    mov r8, 10 ; делим на 10
     mov r9, rsp
-    push rax
-    push rax
-    push rax
+    sub rsp, 22
     mov rax, rdi
     test rax, rax 
     jz .exit
@@ -62,7 +63,7 @@ print_uint:
 
     .iterate:
         xor rdx, rdx
-        inc r9
+        dec r9
         div r8
         add rdx, '0'
         mov byte[r9], dl
@@ -72,7 +73,7 @@ print_uint:
     .next:
     mov rdi, r9
     call print_string
-    sub rsp, 22
+    add rsp, 22
     .exit:
     ret
 
