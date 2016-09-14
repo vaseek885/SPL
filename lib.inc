@@ -51,7 +51,9 @@ print_uint:
     xor r9, r9
     ;Для нашей строки понадобится 21 байт места максимум
     mov r9, rsp
-    sub rsp, 22
+    push rax
+    push rax
+    push rax
     mov rax, rdi
     test rax, rax 
     jz .exit
