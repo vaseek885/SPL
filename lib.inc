@@ -28,10 +28,11 @@ print_string:
 
 print_char:
     xor rax, rax
-    mov rdx, 1 ; количество байт для записи
-    mov rdi, 1 ; дескриптор stdout
+    mov rdx, 3 ; количество байт, которое нужно записать
+    mov rsi, rdi ; адрес строки
+    mov rdi, 1 ; пишем в stdout
     mov rax, 1 ; номер системного вызова write
-    mov byte rsi, [rdi] ; адрес строки
+    
     syscall
 
     ret
