@@ -99,7 +99,7 @@ string_equals:
 
 
 read_char:
- ;xor ax, ax ; 
+    xor ax, ax
     push ax ; 
     
     mov rax, 0 ; 
@@ -118,6 +118,32 @@ word_buffer times 256 db 0
 section .text
 
 read_word:
+xor rdx, rdx ; длина строки
+.next:
+    call read_char
+    cmp al, 0x09
+    jz .done
+    cmp al, 0x20
+    jz .done
+    cmp al, 0x0A
+    jz .done
+
+    test al, al
+    jz .exit
+
+    mov byte[word_buffer + rdx], al
+    inc rdx
+
+    jmp .next
+
+.done:
+    test rdx, rdx
+    jz .next
+
+.exit:
+    mov byte[word_buffer + rdx], 0x00
+    mov rax, word_buffer
+
     ret
 
 ; rdi points to a string
