@@ -99,6 +99,7 @@ string_equals:
 
 
 read_char:
+    xor ax, ax ; 
     sub rsp, 2
     xor rax, rax
     mov rax, 0
