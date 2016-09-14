@@ -1,164 +1,171 @@
 section .text
 
 string_length:
-
-    xor rax, rax ; длина строки будет храниться в rax
-    
-    .iterate:
-        mov rdx, [rdi + rax]
-        test dl, dl ; Если строка закончилась, то выходим.
+    xor rax, rax ; длина строки
+    .cycle:
+        mov dl, [rdi + rax]
+        test dl, dl ; 
         jz .exit
-
         inc rax
-        jmp .iterate
-    
+        jmp .cycle
     .exit:
     ret
+
 print_string:
     push rdi
     call string_length
-    pop  rdi
+    pop rdi
 
-    mov rdx, rax ; количество байт, которое нужно записать 
+    mov rdx, rax ; сколько байт записываем
     mov rsi, rdi ; адрес строки
-    mov rdi, 1   ; пишем в stdout
-    mov rax, 1   ; номер системного вызова write
+    mov rdi, 1 ; дескриптор stdout
+    mov rax, 1 ; системный вызов write
     syscall
     ret
 
 print_char:
-    xor rax, rax
-    push di
-    mov rdx, 1 ; количество байт, которое нужно записать
-    mov rsi, rsp ; адрес символа
-    mov rdi, 1 ; пишем в stdout
+    push di ; 
+    mov rdx, 1 ; количество байт для записи
+    mov rdi, 1 ; дескриптор stdout
     mov rax, 1 ; номер системного вызова write
+    mov rsi, rsp ; адрес строки
     syscall
     pop di
     ret
 
 print_newline:
-    mov rdi, 10
+    mov rdi, 0xA
     call print_char
     ret
-
 
 print_uint:
-    ; rdi - 8-ми байтное беззнаковое число
+    mov r10, 10 ; основа десятичной системы счисления
     mov rax, rdi
-
-    mov r10, 10 ; основание СС
-
-    mov r9, rsp
-    sub rsp, 21 ; выделяем буфер
-
-    ; записываем признак конца строки
-    dec r9
-    mov byte[r9], 0x00
+    mov r8, rsp
+    sub rsp, 21 ; 21 - максимально необходимый размер буфера
+    ; признак конца строки
+    dec r8
+    mov byte[r8], 0x00
     
-    .iteratey: ; цикл с пост-условием
+    .cycle: 
         xor rdx, rdx
-
         div r10 ; rax - делимое
-
-        ; число -> символ ASCII
         add rdx, '0'
-
-        ; кладем очередную цифру в стек
-        dec r9
-        mov byte[r9], dl
-        
-        ; ценая часть = 0 ?
+        dec r8
+        mov byte[r8], dl
         test rax, rax
-        jnz .iteratey
+        jnz .cycle
 
-    mov rdi, r9
+    mov rdi, r8
     call print_string
     
-    add rsp, 21 ; восстанавливаем stack
+    add rsp, 21 ; 
     ret
-
 
 print_int:
-    xor rax, rax
     test rdi, rdi
-    js .negative
+    js .minus ; отрицательное число
 
-    call print_uint
+    .plus:
+        call print_uint
     ret
+    .minus:
+        push rdi
 
-    .negative:
-    push rdi
-    mov rdi, '-'
-    call print_char
-    pop rdi
-    not rdi
-    inc rdi
-    call print_uint
+        mov rdi, '-'
+        call print_char
+
+        pop rdi
+
+        not rdi
+        inc rdi
+
+        call print_uint
     ret
 
 string_equals:
+    ; rdi - указатель 1
+    ; rsi - указатель 2
     xor rax, rax
+
+    .iterate:
+        mov r8b, [rdi]
+        mov r9b, [rsi]
+
+        inc rdi
+        inc rsi
+
+        cmp r8b, r9b
+        je .equals
+
+        .not_equals:
+            mov rax, 0
+            ret
+
+        .equals:
+            test r8b, r9b
+            jz .exit
+
+        jmp .iterate
+    .exit:
+        mov rax, 1
     ret
 
-
 read_char:
-    xor ax, ax
-    push ax ; 
+    xor ax, ax ; ВОЛШЕБНАЯ СТРОЧКА
+    push ax ; выделяю буф. размером 2 Byte
     
-    mov rax, 0 ; 
-    mov rdi, 0 ; 
-    mov rsi, rsp ; 
-    mov rdx, 1 ; 
+    mov rax, 0 ; номер системного вызова read
+    mov rdi, 0 ; дескриптор stdin
+    mov rsi, rsp ; буфер
+    mov rdx, 1 ; количество байт для чтения
     syscall
 
     pop ax
     ret
 
-
-section .data
+section .data ; по какой-то неводомой причине здесь можно писать .data :D
 word_buffer times 256 db 0
 
 section .text
 
 read_word:
     xor rdx, rdx ; длина строки
-.next:
-    push rdx
-    call read_char
-    pop rdx
-    cmp al, 0x09
-    jz .done
-    cmp al, 0x20
-    jz .done
-    cmp al, 0x0A
-    jz .done
 
-    test al, al
-    jz .exit
+    .read_next:
+        push rdx
+        call read_char
+        pop rdx
 
-    mov byte[word_buffer + rdx], al
-    inc rdx
+        cmp al, 0x20
+        jz .check
+        cmp al, 0x09
+        jz .check
+        cmp al, 0x0A
+        jz .check
 
-    jmp .next
+        test al, al
+        jz .finish
 
-.done:
-    test rdx, rdx
-    jz .next
+        mov byte[word_buffer + rdx], al
+        inc rdx
 
-.exit:
-    mov byte[word_buffer + rdx], 0x00
-    mov rax, word_buffer
+        jmp .read_next
 
+    .check:
+        test rdx, rdx
+        jz .read_next
+
+    .finish:
+        mov byte[word_buffer + rdx], 0x00
+        mov rax, word_buffer
     ret
 
 ; rdi points to a string
 ; returns rax: number, rdx : length
-
 parse_uint:
     mov r10, 10 ; основанеие СС
     xor rax, rax ; прочитанное число
-    xor r8, r8
     xor r9, r9 ; длина прочитаного числа
     ; r8b - очередная цифра
 
@@ -184,23 +191,42 @@ parse_uint:
 ; rdi points to a string
 ; returns rax: number, rdx : length
 parse_int:
-    xor rax, rax
-    ret 
+    mov r8b, [rdi]
+    cmp r8b, '-'
+    jnz .plus
 
+    .minus:
+        inc rdi
+        call parse_uint
 
-string_copy:
-    xor rax, rax
-    .iterate:
-    mov al, [rdi]
-    mov byte[rsi], al
+        not rax
+        inc rax
 
-    test al,al
-    jz .exit
-
-    inc rdi
-    inc rsi
-    jmp .iterate
-
-    .exit:
+        inc rdx
+    ret
+    .plus:
+        call parse_uint
     ret
 
+string_copy:
+    ; rdi - адрес первого символа строки (далее - очередного символа)
+    ; rsi - адрсе места вставки
+    xor rax, rax
+
+    .iterate:
+        mov al, [rdi]
+
+        ; check
+        test al, al
+        jz .exit
+
+        mov byte[rsi], al
+
+        inc rdi
+        inc rsi
+
+        jmp .iterate
+
+    .exit:
+        mov byte[rsi], 0
+    ret
