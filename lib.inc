@@ -10,7 +10,7 @@ string_length:
         jmp .cycle
     .exit:
     ret
-,
+
 print_string:
     push rdi
     call string_length
@@ -214,4 +214,4 @@ string_copy:
 
 
 
-число прочитать в фаил, если простое - вывод 1, иначе 0
+;число прочитать в фаил, если простое - вывод 1, иначе 0
