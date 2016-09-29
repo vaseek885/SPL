@@ -17,9 +17,10 @@ section .data
         mov rsi, rsp
         mov rdx, 3 
         syscall
-        pop r13
-        
-        call string_length
+        mov r13, rdi
+        pop rdi
+        call print_uint
+
         mov rdi, rax
         mov rax, 60
         syscall
