@@ -1,6 +1,6 @@
 global _start
 
-%include "../lib.inc"
+%include "lib.inc"
 
 %define pc r12
 %define w r13
