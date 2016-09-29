@@ -10,7 +10,7 @@ string_length:
         jmp .cycle
     .exit:
     ret
-
+,
 print_string:
     push rdi
     call string_length
@@ -196,7 +196,7 @@ string_copy:
 
     .cycle:
         mov al, [rdi]
-        ; check
+
         test al, al
         jz .exit
 
@@ -210,3 +210,8 @@ string_copy:
     .exit:
         mov byte[rsi], 0
     ret
+
+
+
+
+число прочитать в фаил, если простое - вывод 1, иначе 0
