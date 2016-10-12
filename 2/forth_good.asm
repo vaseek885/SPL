@@ -443,13 +443,6 @@ find_word:
             mov r8, [r8]
 
             push rdi;dbg
-      
-        	mov rdi, r8;dbg
-        	add rdi, 8;dbg
-        	call print_string;dbg
-        	call print_newline;dbg
-        	pop rdi;dbg
-
             test r8, r8
             
             jnz .iterate
