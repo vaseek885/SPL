@@ -48,6 +48,7 @@ section .data
 res1: db 'Good', 0
 res2: db 'Not good', 0
 res3: db 'Fuck', 0
+res4: db 'Введенная последовательность символов не является числом или командой', 0
 old_rsp: dq 0
 state: dq 0 ; Режим (компиляция / интерпретация)
 last_word: dq 0 ; Адрес последнего определенного слова !!!
@@ -161,7 +162,10 @@ interpreter_loop:
 		jmp interpreter_loop
 
 		.not_number:
-		; Ошибка! Неизвестное слово
+		mov rdi, res4
+		call print_string
+		call print_newline
+		jmp interpreter_loop
 
 	.exit:
 		; ...
@@ -504,3 +508,4 @@ section .bss
 bss_buf resb 65536 ; Пользовательская память
 bss_stack resb 2048 ; Стек адресов возврата
 bss_vocabulary resb 65536 ; Словарь
+	
