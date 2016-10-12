@@ -66,19 +66,22 @@ mov pc, xt_interpreter
 jmp next
 
 interpreter_loop:
+	;debug
 	mov rdi, res1
-	call print_string
-	call print_newline
+	call print_string;dbg
+	call print_newline;dbg
 
 	call read_word
-	mov rdi, res1
-	call print_string
-	call print_newline
+
 	test rdx, rdx
 	jz .exit
 
 	mov rdi, rax
 	push rdi
+
+	call print_string;dbg
+	call print_newline;dbg
+
 	call find_word
 	pop rdi
 
