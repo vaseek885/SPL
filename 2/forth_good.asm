@@ -457,7 +457,6 @@ find_word:
 
             mov r8, [r8]
 
-            push rdi;dbg
             test r8, r8
             
             jnz .iterate
