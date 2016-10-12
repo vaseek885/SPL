@@ -47,6 +47,7 @@ colon %1, %2, 0
 section .data
 res1: db 'Good', 0
 res2: db 'Not good', 0
+res4: db 'Введенная последовательность символов не является числом или командой', 0
 old_rsp: dq 0
 ; Компилятор:
 state: db 0 ; Режим (компиляция / интерпретация)
@@ -233,7 +234,7 @@ section .text
 
 native 'exit', exit
 	mov pc, [rstack]
-	add rstack, 8
+	sub rstack, 8
 	jmp next
 
 native '.S', print_stack
@@ -422,7 +423,7 @@ native 'number', number
 	call read_word
 	mov rdi, rax
 
-	xor r8, r8 ; Костыль для библиотеки (потом переделать parse_int)
+	xor r8, r8 
 	call parse_int
 
 	push rax
@@ -446,7 +447,7 @@ native '@', read_date
 native ':', start_colon
 	; Прочитаем следующее слово из stdin
 	mov rax, [last_word]
-	mov qword[here], rax
+	mov [here], rax
 
 	mov qword[last_word], here
 
@@ -509,7 +510,7 @@ next:
 
 ; Для colon-слов:
 docol:
-	sub rstack, 8
+	add rstack, 8
 	mov [rstack], pc
 	add w, 8
 	mov pc, w
