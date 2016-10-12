@@ -415,13 +415,16 @@ find_word:
         	pop rdi;dbg
 
             mov r8, [r8]
-            test r8, r8
+
             push rdi;dbg
-        	mov rdi, r8;dbg
         	add rdi, 8;dbg
+        	mov rdi, r8;dbg
         	call print_string;dbg
-        	;call print_newline;dbg
+        	call print_newline;dbg
         	pop rdi;dbg
+
+            test r8, r8
+            
             jnz .iterate
 
             mov rax, 0
