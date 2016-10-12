@@ -423,6 +423,13 @@ find_word:
             ret
 
         .not_good:
+        	;debug
+        	push rdi;dbg
+        	mov rdi, res2;dbg
+        	call print_string;dbg
+        	call print_newline;dbg
+        	pop rdi;dbg
+
             mov r8, [r8]
             test r8, r8
             jnz .iterate
