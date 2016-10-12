@@ -173,6 +173,7 @@ compiler_loop:
 	.not_found:
 		; if [rdi] - это число
 		call parse_int
+		
 		test rdx, rdx
 		jnz .number
 		jz .not_number
@@ -485,13 +486,13 @@ native ':', start_colon
 
 
 	;debug
-		mov rax, [last_word]
-		add rax, 8
-		mov rdi, rax
+		;mov rax, [last_word]
+		;add rax, 8
+		;mov rdi, rax
 
 
-		call print_string
-		call print_newline
+		;call print_string
+		;call print_newline
 	jmp next
 	.found:
 
