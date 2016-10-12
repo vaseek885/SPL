@@ -88,6 +88,11 @@ interpreter_loop:
 		mov qword[program_stub], rax
 		mov pc, program_stub
 
+		; debug
+		mov rdi, res1
+		call print_string
+		call print_newline
+
 		jmp next ; +
 
 	.not_found:
@@ -406,7 +411,7 @@ find_word:
         	push rdi;dbg
         	mov rdi, res2;dbg
         	call print_string;dbg
-        	;call print_newline;dbg
+        	call print_newline;dbg
         	pop rdi;dbg
 
             mov r8, [r8]
