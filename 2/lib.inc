@@ -187,6 +187,8 @@ parse_uint:
 ; rdi points to a string
 ; returns rax: number, rdx : length
 parse_int:
+    push r8
+    xor r8, r8
     mov r8b, [rdi]
     cmp r8b, '-'
     jnz .plus
@@ -198,6 +200,7 @@ parse_int:
     ret
     .plus:
         call parse_uint
+    pop r8
     ret
 
 string_copy:
