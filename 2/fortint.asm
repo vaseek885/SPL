@@ -478,9 +478,11 @@ native ':', start_colon
 	mov byte[state], 1
 
 	;debug
-		mov rdi, here
-		sub rdi, 10
-		sub rdi, rdx
+		mov rax, [last_word]
+		add rax, 8
+		mov rdi, rax
+
+
 		call print_string
 		call print_newline
 	jmp next
