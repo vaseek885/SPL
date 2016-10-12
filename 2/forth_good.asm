@@ -75,8 +75,6 @@ interpreter_loop:
 	mov rdi, rax
 	push rdi
 
-
-
 	call find_word
 	pop rdi
 
@@ -409,22 +407,11 @@ find_word:
         jnz .good
 
         .good:
-        	;debug
-        	push rdi;dbg
-        	mov rdi, res1;dbg
-        	call print_string;dbg
-        	call print_newline;dbg
-        	pop rdi;dbg
+        	
             mov rax, r8
             ret
 
         .not_good:
-        	;debug
-        	push rdi;dbg
-        	mov rdi, res2;dbg
-        	call print_string;dbg
-        	call print_newline;dbg
-        	pop rdi;dbg
 
             mov r8, [r8]
             test r8, r8
