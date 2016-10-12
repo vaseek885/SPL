@@ -69,8 +69,8 @@ interpreter_loop:
 
 
 	call read_word
-	test rdx, rdx
-	jz .exit
+
+
 
 	mov rdi, rax
 	push rdi
@@ -130,8 +130,8 @@ compiler_loop:
 		call print_newline
 
 	call read_word
-	test rdx, rdx
-	jz .exit
+
+
 
 	mov rdi, rax
 	push rdi
@@ -517,7 +517,7 @@ next:
 ; Для colon-слов:
 docol:
 	sub rstack, 8
-	cmp bss_stack, rstack
+	cmp [qword]bss_stack, rstack
 	jz .error
 	mov [rstack], pc
 	add w, 8
