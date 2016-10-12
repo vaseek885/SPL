@@ -47,59 +47,37 @@ colon %1, %2, 0
 section .data
 res1: db 'Good', 0
 res2: db 'Not good', 0
-res3: db 'Fuck', 0
-res4: db 'Введенная последовательность символов не является числом или командой', 0
 old_rsp: dq 0
-state: dq 0 ; Режим (компиляция / интерпретация)
-last_word: dq 0 ; Адрес последнего определенного слова !!!
+; Компилятор:
+state: db 0 ; Режим (компиляция / интерпретация)
+last_word: dq 0 ; Адрес последнего определенного слова
 
 program_stub: dq 0
 xt_interpreter: dq .interpreter
 .interpreter: dq interpreter_loop
 
 section .text
-_start:
-mov qword[old_rsp], rsp
-mov rstack, bss_stack
-mov here, bss_vocabulary
-
-
-mov pc, xt_interpreter
-jmp next
 
 interpreter_loop:
-	;debug
-	call read_word
+	; if state != 0
+	xor rax, rax
+	mov al, [state]
+	test al, al
+	jnz compiler_loop
 
+
+	call read_word
 	test rdx, rdx
 	jz .exit
 
 	mov rdi, rax
 	push rdi
-
 	call find_word
 	pop rdi
-
-	; debug
-	push rax
-	push rdi
-	mov rdi, res1
-	call print_string
-	mov rdi, res1
-	call print_string
-	mov rdi, res1
-	call print_string
-	call print_newline
-	pop rdi
-	pop rax
-
 
 	test rax, rax
 	jnz .found
 	jz .not_found
-
-
-
 
 	.found:
 		mov rdi, rax
@@ -108,51 +86,21 @@ interpreter_loop:
 		mov pc, program_stub
 
 		; debug
-		push rdi
-		mov rdi, res3
-		call print_string
-		mov rdi, res3
-		call print_string
-		mov rdi, res3
-		call print_string
-		call print_newline
-		pop rdi
+		;mov rdi, res1
+		;call print_string
+		;call print_newline
 
 		jmp next ; +
 
 	.not_found:
 		; if [rdi] - это число
-
-		;debug
-		push rdi
-		mov rdi, res2
-		call print_string
-		mov rdi, res3
-		call print_string
-		mov rdi, res3
-		call print_string
-		call print_newline
-		pop rdi
-
 		call parse_int
 		test rdx, rdx
 		jnz .number
 		jz .not_number
 
 		.number:
-		push rax
-		push rdi
-		mov rdi, res1
-		call print_string
-		mov rdi, res2
-		call print_string
-		mov rdi, res2
-		call print_string
-		call print_newline
-		pop rdi
-		pop rax
-
-		push rax
+			push rax
 
 		; debug
 		;mov rdi, res1
@@ -162,15 +110,102 @@ interpreter_loop:
 		jmp interpreter_loop
 
 		.not_number:
-		mov rdi, res4
-		call print_string
-		call print_newline
-		jmp interpreter_loop	
+		; Ошибка! Неизвестное слово
 
 	.exit:
 		mov rax, 60
+	    xor rdi, rdi
+	    syscall
+
+compiler_loop:
+	; debug
+		mov rdi, res1
+		call print_string
+		call print_newline
 		xor rdi, rdi
-		syscall
+		mov dil, [state]
+		call print_int
+		call print_newline
+
+	call read_word
+	test rdx, rdx
+	jz .exit
+
+	mov rdi, rax
+	push rdi
+	call find_word
+	pop rdi
+
+	test rax, rax
+	jnz .found
+	jz .not_found
+
+	.found:
+		mov rdi, rax
+		call cfa
+
+		xor rdi, rdi
+		mov dil, [rax - 1]
+		cmp dil, 1 ; F == 1 => immediate
+		jz .immediate
+		jnz .not_immediate
+
+		.immediate:
+			; only ( ; )
+			mov qword[program_stub], rax
+			mov pc, program_stub
+			jmp next
+
+		.not_immediate:
+			mov [here], rax
+			add here, 8
+
+			; if [rax-1] == [branch] ... (проверяем флаги)
+			xor rdi, rdi
+			mov dil, [rax - 1]
+			cmp dil, 2 ; F == 2 => branch || branch0
+			jz .br
+			jnz .not_br
+			.br:
+				mov byte[state], 2
+				jmp .next_iter
+			.not_br:
+				mov byte[state], 1
+
+			.next_iter:
+			jmp compiler_loop
+
+	.not_found:
+		; if [rdi] - это число
+		call parse_int
+		test rdx, rdx
+		jnz .number
+		jz .not_number
+
+		.number:
+			; if пред. слово было [branch]
+			xor rdi, rdi
+			mov dil, [state]
+			cmp dil, 2
+			jnz .else
+			jz .true
+
+			.else:
+				mov qword[here], xt_lit
+				add here, 8
+			.true:
+			mov qword[here], rax
+			add here, 8
+
+		jmp compiler_loop
+
+		.not_number:
+		; Ошибка! Неизвестное слово
+
+	.exit:
+		mov rax, 60
+	    xor rdi, rdi
+	    syscall
 
 section .data
 ; colon-слова:
@@ -188,14 +223,12 @@ colon 'or', logical_or
     dq xt_logical_not
     dq xt_exit
 
-
 colon '>', greater
 	dq xt_swap
 	dq xt_less
     dq xt_exit
 
 section .text
-
 ; Реализации:
 
 native 'exit', exit
@@ -395,19 +428,77 @@ native 'number', number
 	push rax
 	jmp next
 
-native 'mem', mem ;?
+native 'mem', mem
 	push bss_buf
 	jmp next
 
-native '!', write_date ;?
+native '!', write_date
 	pop rax ; address
 	pop rdi ; data
 	mov qword[rax], rdi
 	jmp next
 
-native '@', read_date ;?
+native '@', read_date
 	pop rax ; address
 	push qword[rax]
+	jmp next
+
+native ':', start_colon
+	; Прочитаем следующее слово из stdin
+	mov rax, [last_word]
+	mov qword[here], rax
+
+	mov qword[last_word], here
+
+	add here, 8
+
+	call read_word
+	mov rdi, rax
+	mov rsi, here
+
+	add here, rdx
+	inc here
+
+	push rdx
+	call string_copy
+	pop rdx
+
+	mov byte[here], 0x00 ; F
+	inc here
+	mov qword[here], docol
+	add here, 8
+
+	mov byte[state], 1
+
+	;debug
+		mov rdi, here
+		sub rdi, 10
+		sub rdi, rdx
+		call print_string
+		call print_newline
+	jmp next
+
+native ';', end_colon, 1 ; F = 1 - Immediate
+	mov byte[state], 0
+	mov qword[here], xt_exit
+	add here, 8
+	jmp next
+
+native 'lit', lit, 3 ; F = 3
+	push qword[pc]
+	add pc, 8
+	jmp next
+
+native 'branch', branch, 2 ; F = 2
+	add pc, [pc]
+	jmp next
+
+native 'branch0', branch0, 2 ; F = 2
+	mov rax, [rsp]
+	test rax, rax
+	jnz .exit
+	add pc, [pc]
+	.exit:
 	jmp next
 
 next:
@@ -433,13 +524,12 @@ find_word:
     ; mov byte[string_buf], rdi
     ; mov rdi, string_buf
 
-    lea r8, [link]
+    lea r8, [last_word]
 
     .iterate:
         ; r8 - текущее проверяемое слово
         ; [r8] - следующее проверяемое слово
 
-        
         mov rsi, r8
         add rsi, 8
 
@@ -449,45 +539,18 @@ find_word:
         pop r8
         pop rdi
 
-        
-
         test rax, rax
         jz .not_good
         jnz .good
 
         .good:
-        	
-        	;debug
-        	push rdi;dbg
-        	mov rdi, res1;dbg
-        	call print_string;dbg
-        	call print_newline;dbg
-        	pop rdi;dbg
-
             mov rax, r8
             ret
 
         .not_good:
-        	;debug
-        	push rdi;dbg
-        	mov rdi, res2;dbg
-        	call print_string;dbg
-        	call print_newline;dbg
-        	pop rdi;dbg
-
             mov r8, [r8]
-
             test r8, r8
-            
             jnz .iterate
-
-            push rdi;dbg
-            mov rdi, res1;dbg
-            call print_string;dbg
-            mov rdi, res1;dbg
-            call print_string;dbg
-            call print_newline;dbg
-            pop rdi;dbg
 
             mov rax, 0
             ret
@@ -510,4 +573,17 @@ section .bss
 bss_buf resb 65536 ; Пользовательская память
 bss_stack resb 2048 ; Стек адресов возврата
 bss_vocabulary resb 65536 ; Словарь
-	
+
+
+
+section .text
+_start:
+mov qword[old_rsp], rsp
+mov rstack, bss_stack
+mov here, bss_vocabulary
+
+mov byte[state], 0x00
+mov qword[last_word], link
+
+mov pc, xt_interpreter
+jmp next
