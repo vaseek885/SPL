@@ -234,7 +234,7 @@ section .text
 
 native 'exit', exit
 	mov pc, [rstack]
-	sub rstack, 8
+	add rstack, 8
 	jmp next
 
 native '.S', print_stack
@@ -510,7 +510,7 @@ next:
 
 ; Для colon-слов:
 docol:
-	add rstack, 8
+	sub rstack, 8
 	mov [rstack], pc
 	add w, 8
 	mov pc, w
@@ -580,7 +580,7 @@ bss_vocabulary resb 65536 ; Словарь
 section .text
 _start:
 mov [old_rsp], rsp
-mov rstack, bss_stack
+lea rstack, [bss_stack+2040]
 mov here, bss_vocabulary
 
 mov byte[state], 0x00
