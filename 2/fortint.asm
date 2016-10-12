@@ -517,7 +517,8 @@ next:
 ; Для colon-слов:
 docol:
 	sub rstack, 8
-	cmp [qword]bss_stack, rstack
+	mov rax, bss_stack
+	cmp rax, rstack
 	jz .error
 	mov [rstack], pc
 	add w, 8
