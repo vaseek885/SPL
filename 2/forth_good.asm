@@ -97,7 +97,6 @@ interpreter_loop:
 		call print_string
 		mov rdi, res3
 		call print_string
-
 		call print_newline
 		pop rdi
 
@@ -109,6 +108,10 @@ interpreter_loop:
 		;debug
 		push rdi
 		mov rdi, res2
+		call print_string
+		mov rdi, res3
+		call print_string
+		mov rdi, res3
 		call print_string
 		call print_newline
 		pop rdi
