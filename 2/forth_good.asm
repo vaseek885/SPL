@@ -67,10 +67,6 @@ jmp next
 
 interpreter_loop:
 	;debug
-	mov rdi, res1;dbg
-	call print_string;dbg
-	call print_newline;dbg
-
 	call read_word
 
 	test rdx, rdx
@@ -79,8 +75,7 @@ interpreter_loop:
 	mov rdi, rax
 	push rdi
 
-	call print_string;dbg
-	call print_newline;dbg
+
 
 	call find_word
 	pop rdi
@@ -392,12 +387,6 @@ find_word:
         ; r8 - текущее проверяемое слово
         ; [r8] - следующее проверяемое слово
 
-        ;debug
-        push rdi;dbg
-        mov rdi, res1;dbg
-        call print_string;dbg
-        call print_newline;dbg
-        pop rdi;dbg
         
         mov rsi, r8
         add rsi, 8
