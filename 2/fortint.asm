@@ -173,7 +173,6 @@ compiler_loop:
 	.not_found:
 		; if [rdi] - это число
 		call parse_int
-
 		test rdx, rdx
 		jnz .number
 		jz .not_number
@@ -445,74 +444,27 @@ native '@', read_date
 	jmp next
 
 native ':', start_colon
-	; ; Прочитаем следующее слово из stdin
-	; call read_word
-	; push rax
-	; push rdx
+	; Прочитаем следующее слово из stdin
+	call read_word
+	push rax
+	push rdx
 
-	; mov rdi, rax
-	; call find_word
-	; test rax, rax
-	; jnz .found
-
-
-	; mov rax, [last_word]
-	; mov [here], rax
-
-	; mov qword[last_word], here
-
-	; add here, 8
-
-	; pop rdx
-	; pop rax
-
-	; mov rdi, rax
-	; mov rsi, here
-
-	; add here, rdx
-	; inc here
-
-	; push rdx
-	; call string_copy
-	; pop rdx
-
-	; mov byte[here], 0x00 ; F
-	; inc here
-	; mov qword[here], docol
-	; add here, 8
-
-	; mov byte[state], 1
-
-
-
-	; ;debug
-	; 	;mov rax, [last_word]
-	; 	;add rax, 8
-	; 	;mov rdi, rax
-
-
-	; 	;call print_string
-	; 	;call print_newline
-	; jmp next
-	; .found:
-
-	; mov rdi, res5
-	; call print_string
-	; call print_newline
-	; mov rax, 60
-	; xor rdi, rdi
-	; syscall
-
+	mov rdi, rax
+	call find_word
+	test rax, rax
+	jnz .found
 
 
 	mov rax, [last_word]
-	mov qword[here], rax
+	mov [here], rax
 
 	mov qword[last_word], here
 
 	add here, 8
 
-	call read_word
+	pop rdx
+	pop rax
+
 	mov rdi, rax
 	mov rsi, here
 
@@ -530,14 +482,25 @@ native ':', start_colon
 
 	mov byte[state], 1
 
+
+
 	;debug
-		;mov rdi, here
-		;sub rdi, 10
-		;sub rdi, rdx
+		;mov rax, [last_word]
+		;add rax, 8
+		;mov rdi, rax
+
+
 		;call print_string
 		;call print_newline
 	jmp next
+	.found:
 
+	mov rdi, res5
+	call print_string
+	call print_newline
+	mov rax, 60
+	xor rdi, rdi
+	syscall
 
 native ';', end_colon, 1 ; F = 1 - Immediate
 	mov byte[state], 0
