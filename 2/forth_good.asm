@@ -86,9 +86,9 @@ interpreter_loop:
 		mov pc, program_stub
 
 		; debug
-		;mov rdi, res1
-		;call print_string
-		;call print_newline
+		mov rdi, res1
+		call print_string
+		call print_newline
 
 		jmp next ; +
 
