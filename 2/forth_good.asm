@@ -414,6 +414,13 @@ find_word:
 
         .good:
         	
+        	;debug
+        	push rdi;dbg
+        	mov rdi, res1;dbg
+        	call print_string;dbg
+        	call print_newline;dbg
+        	pop rdi;dbg
+
             mov rax, r8
             ret
 
