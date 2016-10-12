@@ -578,7 +578,7 @@ bss_vocabulary resb 65536 ; Словарь
 
 section .text
 _start:
-mov qword[old_rsp], rsp
+mov [old_rsp], rsp
 mov rstack, bss_stack
 mov here, bss_vocabulary
 
