@@ -392,6 +392,13 @@ find_word:
         ; r8 - текущее проверяемое слово
         ; [r8] - следующее проверяемое слово
 
+        ;debug
+        push rdi;dbg
+        mov rdi, res1;dbg
+        call print_string;dbg
+        call print_newline;dbg
+        pop rdi;dbg
+        
         mov rsi, r8
         add rsi, 8
 
@@ -407,7 +414,7 @@ find_word:
 
         .good:
         	;debug
-        	push rdi
+        	push rdi;dbg
         	mov rdi, res1;dbg
         	call print_string;dbg
         	call print_newline;dbg
