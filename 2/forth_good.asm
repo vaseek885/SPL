@@ -47,6 +47,7 @@ colon %1, %2, 0
 section .data
 res1: db 'Good', 0
 res2: db 'Not good', 0
+res3: db 'Not good', 0
 old_rsp: dq 0
 state: dq 0 ; Режим (компиляция / интерпретация)
 last_word: dq 0 ; Адрес последнего определенного слова !!!
@@ -89,9 +90,11 @@ interpreter_loop:
 		mov pc, program_stub
 
 		; debug
-		mov rdi, res1
+		push rdi
+		mov rdi, res3
 		call print_string
 		call print_newline
+		pop rdi
 
 		jmp next ; +
 
