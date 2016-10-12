@@ -47,6 +47,7 @@ colon %1, %2, 0
 section .data
 res1: db 'Good', 0
 res2: db 'Not good', 0
+res3: db 'Стек возврата для colon команд переполнен, слишком большая вложенность команд.', 0
 res4: db 'Введенная последовательность символов не является числом или командой', 0
 old_rsp: dq 0
 ; Компилятор:
@@ -111,12 +112,12 @@ interpreter_loop:
 		jmp interpreter_loop
 
 		.not_number:
-		; Ошибка! Неизвестное слово
+		mov rdi, res4
+		call print_string
+		call print_newline
+		jmp interpreter_loop
 
-	.exit:
-		mov rax, 60
-	    xor rdi, rdi
-	    syscall
+	
 
 compiler_loop:
 	; debug
@@ -201,12 +202,13 @@ compiler_loop:
 		jmp compiler_loop
 
 		.not_number:
-		; Ошибка! Неизвестное слово
+		mov rdi, res4
+		call print_string
+		call print_newline
+		jmp compiler_loop
 
-	.exit:
-		mov rax, 60
-	    xor rdi, rdi
-	    syscall
+
+	
 
 section .data
 ; colon-слова:
@@ -237,6 +239,10 @@ native 'exit', exit
 	add rstack, 8
 	jmp next
 
+native 'quit', quit
+	mov rax, 60
+	xor rdi, rdi
+	syscall
 native '.S', print_stack
 	mov rax, [old_rsp]
 	cmp rax, rsp ; Stack is empty ?
@@ -511,10 +517,19 @@ next:
 ; Для colon-слов:
 docol:
 	sub rstack, 8
+	cmp bss_stack, rstack
+	jz .error
 	mov [rstack], pc
 	add w, 8
 	mov pc, w
 	jmp next
+	.error:
+	mov rdi, res3
+	call print_string
+	call print_newline
+	mov rax, 60
+	xor rdi, rdi
+	syscall
 
 ; Дополнительные процедуры:
 find_word:
