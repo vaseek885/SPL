@@ -463,7 +463,9 @@ find_word:
             jnz .iterate
 
             push rdi;dbg
-            mov rdi, res3;dbg
+            mov rdi, res1;dbg
+            call print_string;dbg
+            mov rdi, res1;dbg
             call print_string;dbg
             call print_newline;dbg
             pop rdi;dbg
