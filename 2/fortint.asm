@@ -165,7 +165,7 @@ compiler_loop:
 			jnz .not_br
 			.br:
 				mov byte[state], 2
-				jmp .compiler_loop
+				jmp compiler_loop
 			.not_br:
 				mov byte[state], 1
 
