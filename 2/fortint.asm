@@ -128,9 +128,9 @@ compiler_loop:
 
 
 	mov rdi, rax
-
+	push rdi
 	call find_word
-
+	pop rdi
 
 	test rax, rax
 	jnz .found
