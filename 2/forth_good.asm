@@ -66,6 +66,10 @@ mov pc, xt_interpreter
 jmp next
 
 interpreter_loop:
+	mov rdi, res1
+	call print_string
+	call print_newline
+
 	call read_word
 	test rdx, rdx
 	jz .exit
