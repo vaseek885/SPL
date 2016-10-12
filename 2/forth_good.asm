@@ -79,9 +79,24 @@ interpreter_loop:
 	call find_word
 	pop rdi
 
+	; debug
+	push rdi
+	mov rdi, res1
+	call print_string
+	mov rdi, res1
+	call print_string
+	mov rdi, res1
+	call print_string
+	call print_newline
+	pop rdi
+
+
 	test rax, rax
 	jnz .found
 	jz .not_found
+
+
+
 
 	.found:
 		mov rdi, rax
