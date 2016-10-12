@@ -90,7 +90,7 @@ interpreter_loop:
 		mov rdi, rax
 		call cfa
 		mov qword[program_stub], rax
-		mov pc, program	_stub
+		mov pc, program_stub
 
 		; debug
 		mov rdi, res1
