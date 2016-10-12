@@ -3,6 +3,6 @@ out:
 	git commit -m Another
 	git push
 run:	
-	nasm -felf64 forth_good.asm
-	ld forth_good.o
+	nasm -felf64 fortint.asm
+	ld fortint.o
 	./a.out
