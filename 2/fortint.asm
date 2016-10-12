@@ -49,6 +49,7 @@ res1: db 'Good', 0
 res2: db 'Not good', 0
 res3: db 'Стек возврата для colon команд переполнен, слишком большая вложенность команд.', 0
 res4: db 'Введенная последовательность символов не является числом или командой', 0
+res4: db 'Рекурсия в colon-словах запрещена', 0
 old_rsp: dq 0
 ; Компилятор:
 state: db 0 ; Режим (компиляция / интерпретация)
@@ -120,14 +121,7 @@ interpreter_loop:
 	
 
 compiler_loop:
-	; debug
-		mov rdi, res1
-		call print_string
-		call print_newline
-		xor rdi, rdi
-		mov dil, [state]
-		call print_int
-		call print_newline
+	
 
 	call read_word
 
@@ -153,7 +147,8 @@ compiler_loop:
 		jnz .not_immediate
 
 		.immediate:
-			; only ( ; )
+			; Исключительно для ; - позволяет прервать цикл компиляции нового слова
+			
 			mov qword[program_stub], rax
 			mov pc, program_stub
 			jmp next
@@ -170,12 +165,10 @@ compiler_loop:
 			jnz .not_br
 			.br:
 				mov byte[state], 2
-				jmp .next_iter
+				jmp .compiler_loop
 			.not_br:
 				mov byte[state], 1
 
-			.next_iter:
-			jmp compiler_loop
 
 	.not_found:
 		; if [rdi] - это число
@@ -189,23 +182,23 @@ compiler_loop:
 			xor rdi, rdi
 			mov dil, [state]
 			cmp dil, 2
+			jz .then
 			jnz .else
-			jz .true
-
+			
 			.else:
 				mov qword[here], xt_lit
 				add here, 8
-			.true:
-			mov qword[here], rax
-			add here, 8
+			.then:
+				mov [here], rax
+				add here, 8
 
-		jmp compiler_loop
+			jmp compiler_loop
 
 		.not_number:
-		mov rdi, res4
-		call print_string
-		call print_newline
-		jmp compiler_loop
+			mov rdi, res4
+			call print_string
+			call print_newline
+			jmp compiler_loop
 
 
 	
@@ -452,6 +445,16 @@ native '@', read_date
 
 native ':', start_colon
 	; Прочитаем следующее слово из stdin
+	call read_word
+	push rax
+	push rdi
+
+	mov rdi, rax
+	call find_word
+	test rax, rax
+	jnz .found
+
+
 	mov rax, [last_word]
 	mov [here], rax
 
@@ -459,7 +462,7 @@ native ':', start_colon
 
 	add here, 8
 
-	call read_word
+	
 	mov rdi, rax
 	mov rsi, here
 
@@ -477,6 +480,8 @@ native ':', start_colon
 
 	mov byte[state], 1
 
+
+
 	;debug
 		mov rax, [last_word]
 		add rax, 8
@@ -486,6 +491,14 @@ native ':', start_colon
 		call print_string
 		call print_newline
 	jmp next
+	.found
+
+	mov rdi, res5
+	call print_string
+	call print_newline
+	mov rax, 60
+	xor rdi, rdi
+	syscall
 
 native ';', end_colon, 1 ; F = 1 - Immediate
 	mov byte[state], 0
@@ -526,6 +539,7 @@ docol:
 	add w, 8
 	mov pc, w
 	jmp next
+
 	.error:
 	mov rdi, res3
 	call print_string
@@ -534,7 +548,7 @@ docol:
 	xor rdi, rdi
 	syscall
 
-; Дополнительные процедуры:
+
 find_word:
 	; rdi - указатель на имя искомой процедуры
     ; rax - вернуть адрес слова, либо 0
