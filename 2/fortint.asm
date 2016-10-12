@@ -503,8 +503,8 @@ native ':', start_colon
 	; xor rdi, rdi
 	; syscall
 
-	native ':', start_colon
-	; Прочитаем следующее слово из stdin
+
+
 	mov rax, [last_word]
 	mov qword[here], rax
 
