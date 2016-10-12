@@ -140,6 +140,18 @@ interpreter_loop:
 
 		.number:
 		push rax
+		push rdi
+		mov rdi, res1
+		call print_string
+		mov rdi, res2
+		call print_string
+		mov rdi, res2
+		call print_string
+		call print_newline
+		pop rdi
+		pop rax
+
+		push rax
 
 		; debug
 		;mov rdi, res1
