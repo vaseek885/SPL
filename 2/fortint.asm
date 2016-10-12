@@ -137,9 +137,9 @@ compiler_loop:
 	jz .not_found
 
 	.found:
-		mov rdi, res1
-		call print_string
-		call print_newline
+		; mov rdi, res1
+		; call print_string
+		; call print_newline
 
 		mov rdi, rax
 		call cfa
