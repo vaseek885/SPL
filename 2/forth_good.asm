@@ -100,6 +100,14 @@ interpreter_loop:
 
 	.not_found:
 		; if [rdi] - это число
+
+		;debug
+		push rdi
+		mov rdi, res1
+		call print_string
+		call print_newline
+		pop rdi
+
 		call parse_int
 		test rdx, rdx
 		jnz .number
