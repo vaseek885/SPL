@@ -165,6 +165,10 @@ compiler_loop:
 			xor rdi, rdi
 			mov dil, [rax - 1]
 			cmp dil, 2 ; F == 2 => branch || branch0
+			mov rdi, res1
+			call print_string
+			call print_newline
+		
 			jz .br
 			jnz .not_br
 			.br:
