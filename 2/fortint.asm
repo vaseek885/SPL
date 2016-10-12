@@ -453,14 +453,14 @@ native '@', read_date
 
 native ':', start_colon
 	; Прочитаем следующее слово из stdin
-	call read_word
-	push rax
-	push rdx
+	;call read_word
+	;push rax
+	;push rdx
 
-	mov rdi, rax
-	call find_word
-	test rax, rax
-	jnz .found
+	;mov rdi, rax
+	;call find_word
+	;test rax, rax
+	;jnz .found
 
 
 	mov rax, [last_word]
@@ -470,8 +470,9 @@ native ':', start_colon
 
 	add here, 8
 
-	pop rdx
-	pop rax
+	;pop rdx
+	;pop rax
+	call read_word
 
 	mov rdi, rax
 	mov rsi, here
