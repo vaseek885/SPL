@@ -128,9 +128,9 @@ compiler_loop:
 
 
 	mov rdi, rax
-	push rdi
+
 	call find_word
-	pop rdi
+
 
 	test rax, rax
 	jnz .found
@@ -447,7 +447,7 @@ native ':', start_colon
 	; Прочитаем следующее слово из stdin
 	call read_word
 	push rax
-	push rdi
+	push rdx
 
 	mov rdi, rax
 	call find_word
@@ -462,9 +462,9 @@ native ':', start_colon
 
 	add here, 8
 
-	pop rdi
+	pop rdx
 	pop rax
-	
+
 	mov rdi, rax
 	mov rsi, here
 
