@@ -463,17 +463,61 @@ native ':', start_colon
 	;jnz .found
 
 
+	; mov rax, [last_word]
+	; mov [here], rax
+
+	; mov qword[last_word], here
+
+	; add here, 8
+
+	; ;pop rdx
+	; ;pop rax
+	; call read_word
+
+	; mov rdi, rax
+	; mov rsi, here
+
+	; add here, rdx
+	; inc here
+
+	; push rdx
+	; call string_copy
+	; pop rdx
+
+	; mov byte[here], 0x00 ; F
+	; inc here
+	; mov qword[here], docol
+	; add here, 8
+
+	; mov byte[state], 1
+
+
+
+	; ;debug
+	; 	;mov rax, [last_word]
+	; 	;add rax, 8
+	; 	;mov rdi, rax
+
+
+	; 	;call print_string
+	; 	;call print_newline
+	; jmp next
+	; .found:
+
+	; mov rdi, res5
+	; call print_string
+	; call print_newline
+	; mov rax, 60
+	; xor rdi, rdi
+	; syscall
 	mov rax, [last_word]
-	mov [here], rax
+	mov qword[here], rax
 
 	mov qword[last_word], here
 
 	add here, 8
 
-	;pop rdx
-	;pop rax
 	call read_word
-
 	mov rdi, rax
 	mov rsi, here
 
@@ -491,25 +535,13 @@ native ':', start_colon
 
 	mov byte[state], 1
 
-
-
 	;debug
-		;mov rax, [last_word]
-		;add rax, 8
-		;mov rdi, rax
-
-
+		;mov rdi, here
+		;sub rdi, 10
+		;sub rdi, rdx
 		;call print_string
 		;call print_newline
 	jmp next
-	.found:
-
-	mov rdi, res5
-	call print_string
-	call print_newline
-	mov rax, 60
-	xor rdi, rdi
-	syscall
 
 native ';', end_colon, 1 ; F = 1 - Immediate
 	mov byte[state], 0
