@@ -462,6 +462,8 @@ native ':', start_colon
 
 	add here, 8
 
+	pop rdi
+	pop rax
 	
 	mov rdi, rax
 	mov rsi, here
