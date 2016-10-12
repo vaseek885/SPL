@@ -71,6 +71,9 @@ interpreter_loop:
 	call print_newline
 
 	call read_word
+	mov rdi, res1
+	call print_string
+	call print_newline
 	test rdx, rdx
 	jz .exit
 
@@ -87,7 +90,7 @@ interpreter_loop:
 		mov rdi, rax
 		call cfa
 		mov qword[program_stub], rax
-		mov pc, program_stub
+		mov pc, program	_stub
 
 		; debug
 		mov rdi, res1
