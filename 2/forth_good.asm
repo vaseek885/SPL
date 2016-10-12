@@ -67,7 +67,7 @@ jmp next
 
 interpreter_loop:
 	;debug
-	mov rdi, res1
+	mov rdi, res1;dbg
 	call print_string;dbg
 	call print_newline;dbg
 
@@ -406,6 +406,12 @@ find_word:
         jnz .good
 
         .good:
+        	;debug
+        	push rdi
+        	mov rdi, res1;dbg
+        	call print_string;dbg
+        	call print_newline;dbg
+        	pop rdi;dbg
             mov rax, r8
             ret
 
