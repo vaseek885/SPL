@@ -395,12 +395,7 @@ find_word:
         pop r8
         pop rdi
 
-        ;debug
-        push rdi;dbg
-        mov rdi, res1;dbg
-        call print_string;dbg
-        call print_newline;dbg
-        pop rdi;dbg
+        
 
         test rax, rax
         jz .not_good
@@ -412,9 +407,21 @@ find_word:
             ret
 
         .not_good:
+        	;debug
+        	push rdi;dbg
+        	mov rdi, res2;dbg
+        	call print_string;dbg
+        	;call print_newline;dbg
+        	pop rdi;dbg
 
             mov r8, [r8]
             test r8, r8
+            push rdi;dbg
+        	mov rdi, r8;dbg
+        	add rdi, 8;dbg
+        	call print_string;dbg
+        	;call print_newline;dbg
+        	pop rdi;dbg
             jnz .iterate
 
             mov rax, 0
