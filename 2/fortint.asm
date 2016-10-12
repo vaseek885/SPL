@@ -140,7 +140,7 @@ compiler_loop:
 		mov rdi, res1
 		call print_string
 		call print_newline
-		
+
 		mov rdi, rax
 		call cfa
 
@@ -172,7 +172,7 @@ compiler_loop:
 				jmp compiler_loop
 			.not_br:
 				mov byte[state], 1
-
+				jmp compiler_loop
 
 	.not_found:
 		; if [rdi] - это число
