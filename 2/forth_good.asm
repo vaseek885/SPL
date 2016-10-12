@@ -93,8 +93,8 @@ interpreter_loop:
 		push rdi
 		mov rdi, res3
 		call print_string
-		call print_string
-		call print_string
+
+
 		call print_newline
 		pop rdi
 
