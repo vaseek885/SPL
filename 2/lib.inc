@@ -2,6 +2,7 @@ section .text
 
 string_length:
     xor rax, rax ; длина строки
+    xor rdx, rdx
     .cycle:
         mov dl, [rdi + rax]
         test dl, dl ; 

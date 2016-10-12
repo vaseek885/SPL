@@ -80,6 +80,7 @@ interpreter_loop:
 	pop rdi
 
 	; debug
+	push rax
 	push rdi
 	mov rdi, res1
 	call print_string
@@ -89,6 +90,7 @@ interpreter_loop:
 	call print_string
 	call print_newline
 	pop rdi
+	pop rax
 
 
 	test rax, rax
