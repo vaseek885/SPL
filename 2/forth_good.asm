@@ -408,6 +408,13 @@ find_word:
         pop r8
         pop rdi
 
+        ;debug
+        push rdi;dbg
+        mov rdi, res1;dbg
+        call print_string;dbg
+        call print_newline;dbg
+        pop rdi;dbg
+
         test rax, rax
         jz .not_good
         jnz .good
