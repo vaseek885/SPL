@@ -491,7 +491,7 @@ native ':', start_colon
 		call print_string
 		call print_newline
 	jmp next
-	.found
+	.found:
 
 	mov rdi, res5
 	call print_string
