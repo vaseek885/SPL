@@ -417,8 +417,9 @@ find_word:
             mov r8, [r8]
 
             push rdi;dbg
-        	add rdi, 8;dbg
+      
         	mov rdi, r8;dbg
+        	add rdi, 8;dbg
         	call print_string;dbg
         	call print_newline;dbg
         	pop rdi;dbg
